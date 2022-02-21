@@ -1,5 +1,4 @@
-# Implementasi Convex Hull untuk *Linear Separability Dataset Visualization*
-
+# Implementasi Convex Hull untuk Visualisasi Tes *Linear Separability Dataset*
 ## Algoritma Divide & Conquer
 
 ## Author
