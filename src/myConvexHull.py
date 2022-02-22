@@ -37,9 +37,19 @@ def MergeSort(points):
       j += 1
       k += 1
 
+def getExtreme(points):
+  p1 = points[0]
+  pn = points[len(points) - 1]
+
+  return p1, pn
+
 def myConvexHull(points):
   convert_points = np.ndarray.tolist(points)
-
+  
+  # Lakukan pengurutan titik titik secara menaik
   MergeSort(convert_points)
+
+  # Ambil dua titik ekstrim paling kiri dan paling kanan
+  p1, pn = getExtreme(convert_points)
 
   return convert_points
