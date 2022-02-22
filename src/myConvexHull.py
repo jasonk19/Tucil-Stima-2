@@ -1,3 +1,5 @@
+import numpy as np
+
 # Melakukan sorting array of points terurut membesar
 # Algoritma yang digunakan untuk sorting adalah Merge Sort
 def MergeSort(points):
@@ -16,7 +18,7 @@ def MergeSort(points):
     k = 0
 
     while i < len(leftArr) and j < len(rightArr):
-      if leftArr[i][0] <= rightArr[j][0]:
+      if leftArr[i] <= rightArr[j]:
         points[k] = leftArr[i]
         i += 1
       else:
@@ -34,13 +36,10 @@ def MergeSort(points):
       points[k] = rightArr[j]
       j += 1
       k += 1
-    
-
-
 
 def myConvexHull(points):
-  MergeSort(points)
+  convert_points = np.ndarray.tolist(points)
 
-  return points
+  MergeSort(convert_points)
 
-
+  return convert_points
