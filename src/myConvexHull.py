@@ -37,12 +37,17 @@ def MergeSort(points):
       j += 1
       k += 1
 
+# Mengambil titik ekstrim dari list of points
+# Karena sudah terurut, 
+# maka titik ekstrim cukup diambil dari indeks pertama dan terakhir
 def getExtreme(points):
   p1 = points[0]
   pn = points[len(points) - 1]
 
   return p1, pn
 
+# Mengambil lokasi suatu titik
+# LOCATION: kiri/atas dan kanan/bawah
 def getLocation(p1, p2, p3):
   value = (p1[0] * p2[1]) + (p3[0] * p1[1]) + (p2[0] * p3[1]) - (p3[0] * p2[1]) - (p2[0] * p1[1]) - (p1[0] * p3[1])
 
@@ -53,15 +58,18 @@ def getLocation(p1, p2, p3):
   else:
     return 0
 
+# Mencari jarak suatu titik terhadap garis
+# USE CASE: mencari titik terjauh dari garis p1 pn
 def getLineDistance(p1, p2, p3):
   value = (p1[0] * p2[1]) + (p3[0] * p1[1]) + (p2[0] * p3[1]) - (p3[0] * p2[1]) - (p2[0] * p1[1]) - (p1[0] * p3[1])
 
   return abs(value)
 
-
+# Rumus menghitung luas segitiga dengan perhitungan 3 titik
 def area(p1, p2, p3):
   return abs((p1[0] * (p2[1] - p3[1]) + p2[0] * (p3[1] - p1[1]) + p3[0] * (p1[1] - p2[1]) / 2))
 
+# Memeriksa apakah suatu titik berada di dalam segitiga
 def isInsideTriangle(p1, p2, p3, p):
   A = area(p1, p2, p3)
   A1 = area(p, p2, p3)
@@ -73,19 +81,24 @@ def isInsideTriangle(p1, p2, p3, p):
   else:
     return False
 
-# Algoritma mencari convex hull dengan algoritma divide and conquer
+# Mencari convex hull dengan algoritma divide and conquer
 def findHull(hull, sn, p, q, simplices):
   if len(sn) == 0:
     return
 
+  # inisiasi
+  # pMax: titik terjauh
+  # maxDist: jarak terjauh
   pMax = [0, 0]
   maxDist = 0
 
+  # Mengupdate pMax dan maxDist
   for point in sn:
     if getLineDistance(p, q, point) > maxDist:
       maxDist = getLineDistance(p, q, point)
       pMax = point
-      
+  
+  # Prosedur penghapusan agar tidak ada titik duplikat
   sn.remove(pMax)
 
   if p in sn:
@@ -93,11 +106,15 @@ def findHull(hull, sn, p, q, simplices):
   if q in sn:
     sn.remove(q)
 
+  # Memasukkan pMax ke list of hull
   hull.append(pMax)
 
+  # Membagi kumpulan titik menjadi 2 bagian
+  # s1 dan s2
   s1 = []
   s2 = []
 
+  # Algoritma pengecekan titik
   for x in sn:
     if isInsideTriangle(p, pMax, q, x):
       sn.remove(x)
@@ -107,6 +124,8 @@ def findHull(hull, sn, p, q, simplices):
       if getLocation(pMax, q, x) > 0:
         s2.append(x)
 
+  # Rekursif fungsi findHull
+  # Membagi sampai menjadi kecil
   findHull(hull, s1, p, pMax, simplices)
   findHull(hull, s2, pMax, q, simplices)
 
@@ -114,11 +133,8 @@ def findHull(hull, sn, p, q, simplices):
   simplices.append([p, pMax])
   simplices.append([pMax, q])
 
-
-def printSimplices(simplices):
-  for simplex in simplices:
-    print(simplex, end="\n")
-
+# Mencari titik titik yang saling berhubungan
+# atau membentuk suatu garis
 def getConnectedSimplex(simplices, hull):
   new_simplices = []
   new_simplices.append(simplices[0])
@@ -131,7 +147,7 @@ def getConnectedSimplex(simplices, hull):
 
   return new_simplices
 
-
+# Mengubah point menjadi index agar dapat melakukan plotting pada notebook
 def convertPointToIndex(simplices, points):
   for i in range(len(simplices)):
     for j in range(len(points)):
@@ -140,6 +156,7 @@ def convertPointToIndex(simplices, points):
       if simplices[i][1] == points[j]:
         simplices[i][1] = j
 
+# Fungsi MAIN
 def myConvexHull(points):
   convert_points = np.ndarray.tolist(points)
   sorted_points = np.ndarray.tolist(points)
@@ -167,6 +184,8 @@ def myConvexHull(points):
     if getLocation(p1, pn, point) < 0:
       s2.append(point) # kumpulan titik sisi bawah
 
+  # Jalankan fungsi findHull berdasarkan list s1 dan s2
+  # Membagi pencarian menjadi 2 bagian (Divide)
   findHull(hull, s1, p1, pn, simplices)
   findHull(hull, s2, pn, p1, simplices)
 
