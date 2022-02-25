@@ -74,7 +74,7 @@ def isInsideTriangle(p1, p2, p3, p):
     return False
 
 # Algoritma mencari convex hull dengan algoritma divide and conquer
-def findHull(hull, sn, p, q):
+def findHull(hull, sn, p, q, simplices):
   if len(sn) == 0:
     return
 
@@ -107,9 +107,38 @@ def findHull(hull, sn, p, q):
       if getLocation(pMax, q, x) > 0:
         s2.append(x)
 
-  findHull(hull, s1, p, pMax)
-  findHull(hull, s2, pMax, q)
+  findHull(hull, s1, p, pMax, simplices)
+  findHull(hull, s2, pMax, q, simplices)
 
+  # Masukkan point yang berhubungan ke list of simplices
+  simplices.append([p, pMax])
+  simplices.append([pMax, q])
+
+
+def printSimplices(simplices):
+  for simplex in simplices:
+    print(simplex, end="\n")
+
+def getConnectedSimplex(simplices, hull):
+  new_simplices = []
+  new_simplices.append(simplices[0])
+
+  for i in range(len(hull) - 1):
+    for j in range(len(simplices)):
+      if simplices[j][0] == new_simplices[-1][1]:
+        new_simplices.append(simplices[j])
+        break
+
+  return new_simplices
+
+
+def convertPointToIndex(simplices, points):
+  for i in range(len(simplices)):
+    for j in range(len(points)):
+      if simplices[i][0] == points[j]:
+        simplices[i][0] = j
+      if simplices[i][1] == points[j]:
+        simplices[i][1] = j
 
 def myConvexHull(points):
   convert_points = np.ndarray.tolist(points)
@@ -122,6 +151,7 @@ def myConvexHull(points):
   p1, pn = getExtreme(sorted_points)
 
   hull = [] # Inisiasi list of points yang membentuk convex hull
+  simplices = [] # Inisiasi list of simplex (point yang saling berhubungan)
 
   # masukkan titik ekstrim ke hull
   hull.append(p1)
@@ -137,7 +167,12 @@ def myConvexHull(points):
     if getLocation(p1, pn, point) < 0:
       s2.append(point) # kumpulan titik sisi bawah
 
-  findHull(hull, s1, p1, pn)
-  findHull(hull, s2, pn, p1)
+  findHull(hull, s1, p1, pn, simplices)
+  findHull(hull, s2, pn, p1, simplices)
 
-  return hull
+  simplices = getConnectedSimplex(simplices, hull)
+
+  convertPointToIndex(simplices, convert_points)
+
+  return np.array(simplices)
+
