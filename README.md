@@ -5,6 +5,7 @@ Tugas Kecil 2 IF2211 Strategi Algoritma Semester II tahun 2021/2022 Pustaka *myC
 ## Requirements
 - [Python](https://www.python.org/downloads/)
 
+**Pembuatan program pada repository di atas menggunakan Python **versi 3.9.0** dan dijalankan pada sistem operasi **Windows***
 ## Cara Menjalankan Program
 1. Download repository
 2. Masuk ke directory src
